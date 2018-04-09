@@ -53,13 +53,13 @@ resources:
 
 jobs:
   - name: my build
-    plan:    
+    plan:
       - get: my-repo-with-pull-requests
         trigger: true
         version: every
       - task: unit test
           ...
-          inputs:          
+          inputs:
             - name: my-repo-with-pull-requests
           run:
           ...
@@ -96,5 +96,11 @@ All `params` and `source` configuration of the original resource will be
 respected.
 
 ### `out`: Update build task status.
-  		  
+
 This updates the build status of the task.
+#### Parameters
+* `name`: *Optional*
+* `path`: *Required* It must be the name of the resource.
+* `state`: *Required* State can be `SUCCESSFUL`, `FAILED` or `INPROGRESS`  
+* `url`: *Required* It should be `$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME
+* `description`: *Optional*

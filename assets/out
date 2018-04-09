@@ -18,15 +18,22 @@ username=`jq -r '.source.username // ""' < ${payload}`
 password=`jq -r '.source.password // ""' < ${payload}`
 project=`jq -r '.source.project // ""' < ${payload}`
 repository=`jq -r '.source.repository // ""' < ${payload}`
-dir=`jq -r '.name // ""' < ${payload}`
+dir=`jq -r '.params.path // ""' < ${payload}`
 if [[ ! ${dir} ]]; then
-    dir=$repository
+    echo "error: params.path can't be empty"
+    exit 1
 fi
 # params
 build=`jq '.params' < ${payload}`
 
 if [[ ! ${base_url} ]]; then
     echo "error: source.base_url can't be empty"
+    exit 1
+fi
+
+params_url=`jq -r '.params.url // ""' < ${payload}`
+if [[ ! ${params_url} ]]; then
+    echo "error: params.url can't be empty"
     exit 1
 fi
 
@@ -44,7 +51,7 @@ if [[ "$bitbucket_type" == "server" ]]; then
         name: (.key + "-" + $id),
         url: $build_url,
         description: .description|tostring
-    }'`    
+    }'`
 elif [[ "$bitbucket_type" == "cloud" ]]; then
     url="${base_url}/api/2.0/repositories/${project}/${repository}/commit/${commit}/statuses/build"
 
@@ -62,7 +69,7 @@ elif [[ "$bitbucket_type" == "cloud" ]]; then
         name: $name,
         url: $build_url,
         description: $desc
-    }'` 
+    }'`
 fi
 
 curl -s --fail -u ${username}:${password} -H "Content-Type: application/json" -XPOST ${url} -d "${json}"

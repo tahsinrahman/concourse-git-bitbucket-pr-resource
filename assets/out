@@ -18,7 +18,7 @@ username=`jq -r '.source.username // ""' < ${payload}`
 password=`jq -r '.source.password // ""' < ${payload}`
 project=`jq -r '.source.project // ""' < ${payload}`
 repository=`jq -r '.source.repository // ""' < ${payload}`
-dir=`jq -r '.source.dir // ""' < ${payload}`
+dir=`jq -r '.name // ""' < ${payload}`
 if [[ ! ${dir} ]]; then
     dir=$repository
 fi
